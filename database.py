@@ -3,11 +3,12 @@ from beanie import init_beanie
 from motor.motor_asyncio import AsyncIOMotorClient
 from models import UserModel
 import os
+from dotenv import load_dotenv
 
-MONGO_URL = os.getenv(
-    "MONGO_URL",
-    "mongodb+srv://yndriswilf:2tFzHhP6f1nPdHEY@cluster0.glnh6jj.mongodb.net/shopbridgedatabase?retryWrites=true&w=majority&appName=Cluster0"
-)
+# Charge les variables du fichier .env
+load_dotenv()
+
+MONGO_URL = os.getenv("MONGO_URL")
 
 async def initiate_database():
     client = AsyncIOMotorClient(MONGO_URL, serverSelectionTimeoutMS=50000)
