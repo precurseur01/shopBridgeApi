@@ -8,8 +8,10 @@ app = FastAPI()
 async def start_db():
     await initiate_database()
     
-
-# app.include_router(auth_router, prefix="/auth", tags=["auth"])
+@app.get("/")
+def read_root():
+    return {"message": "Bienvenue sur l'API !"}
+app.include_router(auth_router, prefix="/auth", tags=["auth"])
 
 @app.get("/ping")
 async def ping():
