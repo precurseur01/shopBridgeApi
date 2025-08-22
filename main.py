@@ -9,7 +9,7 @@ async def start_db():
     await initiate_database()
     
 
-# app.include_router(auth_router, prefix="/auth", tags=["auth"])
+app.include_router(auth_router, prefix="/auth", tags=["auth"])
 
 @app.get("/ping")
 async def ping():
