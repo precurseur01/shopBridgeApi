@@ -22,3 +22,9 @@ class Token(BaseModel):
 # Optionnel : données retournées par /me (user connecté)
 class UserInDB(UserOut):
     hashed_password: str
+
+class UserUpdate(BaseModel):
+    username: Optional[str] = None
+    email: Optional[EmailStr] = None
+    password: Optional[str] = None
+    is_active: Optional[bool] = None
