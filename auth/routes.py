@@ -1,12 +1,13 @@
 from fastapi import APIRouter, HTTPException, status, Depends
 from fastapi.security import OAuth2PasswordRequestForm
 from models import UserModel
-from auth.schemas import UserCreate, Token, UserOut,UserUpdate
-from auth.auth_utils import hash_password, verify_password, create_access_token
+from auth.schemas import UserCreate, Token, UserOut
+from auth.auth_utils import hash_password, verify_password, create_access_token, get_current_user
 
 router = APIRouter()
 
-@router.post("/register", response_model=UserOut,summary="Register user")
+# REGISTER
+@router.post("/register", response_model=UserOut, summary="Register user")
 async def register(user: UserCreate):
     existing_user = await UserModel.find_one({
         "$or": [
@@ -30,7 +31,8 @@ async def register(user: UserCreate):
         is_active=user_obj.is_active
     )
 
-@router.post("/token", response_model=Token)
+# LOGIN
+@router.post("/token", response_model=Token, summary="Login user and get access token")
 async def login(form_data: OAuth2PasswordRequestForm = Depends()):
     user = await UserModel.find_one({"username": form_data.username})
     if not user or not verify_password(form_data.password, user.hashed_password):
@@ -41,42 +43,29 @@ async def login(form_data: OAuth2PasswordRequestForm = Depends()):
     access_token = create_access_token(data={"sub": user.username})
     return {"access_token": access_token, "token_type": "bearer"}
 
-# ============================
-# GET ALL USERS
-# ============================
-@router.get("/users", response_model=list[UserOut])
-async def get_all_users():
-    users = await UserModel.find_all().to_list()
-    return [
-        UserOut(
-            id=str(user.id),
-            username=user.username,
-            email=user.email,
-            is_active=user.is_active
-        )
-        for user in users
-    ]
-@router.put("/users/{user_id}", response_model=UserOut)
-async def update_user(user_id: str, user_update: UserUpdate):
-    # Chercher l'utilisateur par ID
-    user = await UserModel.get(user_id)
-    if not user:
-        raise HTTPException(status_code=404, detail="User not found")
-
-    # Mettre à jour les champs si fournis
-    if user_update.username:
-        user.username = user_update.username
-    if user_update.email:
-        user.email = user_update.email
-    if user_update.password:
-        user.hashed_password = hash_password(user_update.password)
-    if user_update.is_active is not None:
-        user.is_active = user_update.is_active
-
-    await user.save()
+# GET CURRENT USER
+@router.get("/me", response_model=UserOut, summary="Get current user profile")
+async def get_me(current_user: UserModel = Depends(get_current_user)):
     return UserOut(
-        id=str(user.id),
-        username=user.username,
-        email=user.email,
-        is_active=user.is_active
+        id=str(current_user.id),
+        username=current_user.username,
+        email=current_user.email,
+        is_active=current_user.is_active
     )
+
+@router.post("/password-reset", summary="Request password reset")
+async def password_reset(email: str):
+    user = await UserModel.find_one({"email": email})
+    if not user:
+        raise HTTPException(status_code=404, detail="Email not found")
+    # Ici tu peux envoyer un mail avec un token (non implémenté)
+    return {"message": "Password reset link sent to email (simulation)"}
+
+# ====================================================
+# PASSWORD UPDATE
+# ====================================================
+@router.post("/password-update", summary="Update password (authenticated user)")
+async def password_update(new_password: str, current_user: UserModel = Depends(get_current_user)):
+    current_user.hashed_password = hash_password(new_password)
+    await current_user.save()
+    return {"message": "Password updated successfully"}

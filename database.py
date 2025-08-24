@@ -2,16 +2,15 @@
 from beanie import init_beanie
 from motor.motor_asyncio import AsyncIOMotorClient
 from models import UserModel
+from products.shemas import ProductModel  # <- ajoute ceci
 import os
 from dotenv import load_dotenv
 
-# Charge les variables du fichier .env
 load_dotenv()
-
 MONGO_URL = os.getenv("MONGO_URL")
 
 async def initiate_database():
-    client = AsyncIOMotorClient(MONGO_URL, serverSelectionTimeoutMS=50000)
+    client = AsyncIOMotorClient(MONGO_URL)
     try:
         await client.admin.command("ping")
         print("Ping MongoDB réussi !")
@@ -21,5 +20,5 @@ async def initiate_database():
 
     await init_beanie(
         database=client.get_database("shopbridgedatabase"),
-        document_models=[UserModel]
+        document_models=[UserModel, ProductModel]  # <- ajoute ProductModel ici
     )

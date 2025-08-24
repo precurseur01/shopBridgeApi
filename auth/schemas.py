@@ -13,6 +13,7 @@ class UserOut(BaseModel):
     username: str
     email: EmailStr
     is_active: bool
+    is_admin: bool = True
 
 # Token JWT retourné à la connexion
 class Token(BaseModel):
