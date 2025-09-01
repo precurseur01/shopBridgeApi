@@ -1,9 +1,9 @@
-from fastapi import APIRouter, HTTPException, Depends
+from fastapi import APIRouter, HTTPException
 from models import UserModel
 from auth.schemas import UserOut, UserUpdate
-from auth.auth_utils import hash_password, get_current_user
+from auth.auth_utils import hash_password
 
-router = APIRouter(prefix="/users", tags=["Users"])
+router = APIRouter()
 
 # GET ALL USERS (admin uniquement si tu ajoutes une dépendance)
 @router.get("/", response_model=list[UserOut], summary="Get all users")

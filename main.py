@@ -4,7 +4,20 @@ from auth.routes import router as auth_router
 from products.routes import router as products_router
 from users.routes import router as users_router
 
-app = FastAPI()
+app = FastAPI(
+    title="ShopBridge API",           # Nom affiché dans Swagger
+    description="API pour gérer les utilisateurs, produits et commandes",  
+    version="1.0.0",                  # Version de ton API
+    contact={
+        "name": "Yndris Douanla",
+        "url": "https://freedry.dev",
+        "email": "contact@freedry.dev",
+    },
+    license_info={
+        "name": "MIT",
+        "url": "https://opensource.org/licenses/MIT",
+    },
+)
 
 @app.on_event("startup")
 async def start_db():
