@@ -1,24 +1,26 @@
-# database.py
 from beanie import init_beanie
 from motor.motor_asyncio import AsyncIOMotorClient
-from models import UserModel
-from products.shemas import ProductModel  # <- ajoute ceci
-import os
-from dotenv import load_dotenv
+from models import UserModel,ProductModel
+from settings.config import settings
 
-load_dotenv()
-MONGO_URL = os.getenv("MONGO_URL")
+def build_mongo_url() -> str:
+    return (
+        f"mongodb+srv://{settings.MONGO_USER}:{settings.MONGO_PASSWORD}"
+        f"@{settings.MONGO_HOST}/{settings.MONGO_DB}"
+        f"?retryWrites=true&w=majority&appName={settings.MONGO_APP_NAME}"
+    )
 
 async def initiate_database():
-    client = AsyncIOMotorClient(MONGO_URL)
+    client = AsyncIOMotorClient(build_mongo_url())
+
     try:
         await client.admin.command("ping")
-        print("Ping MongoDB réussi !")
+        print("✅ Connexion MongoDB réussie !")
     except Exception as e:
-        print(f"Erreur ping MongoDB : {e}")
+        print(f"❌ Erreur de connexion MongoDB : {e}")
         raise e
 
     await init_beanie(
-        database=client.get_database("shopbridgedatabase"),
-        document_models=[UserModel, ProductModel]  # <- ajoute ProductModel ici
+        database=client.get_database(settings.MONGO_DB),
+        document_models=[UserModel, ProductModel]
     )

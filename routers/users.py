@@ -1,7 +1,7 @@
 from fastapi import APIRouter, HTTPException
 from models import UserModel
-from auth.schemas import UserOut, UserUpdate
-from auth.auth_utils import hash_password
+from schemas import UserOut, UserUpdate
+from utils.auth_utils import hash_password
 
 router = APIRouter()
 
