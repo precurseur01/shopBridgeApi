@@ -1,0 +1,43 @@
+# ---------------------------
+# Fichiers Python
+# ---------------------------
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.pyc
+*.pdb
+*.egg
+*.egg-info/
+dist/
+build/
+*.log
+
+# ---------------------------
+# Virtualenv / environnement
+# ---------------------------
+env/
+venv/
+ENV/
+.venv/
+
+# ---------------------------
+# Fichiers sensibles / config
+# ---------------------------
+.env
+.env.*  # si tu as plusieurs fichiers .env
+config/*.env  # si tu stockes des .env dans un sous-dossier config
+
+# ---------------------------
+# IDE / éditeurs
+# ---------------------------
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# ---------------------------
+# OS
+# ---------------------------
+.DS_Store
+Thumbs.db
