@@ -26,7 +26,7 @@ ENV/
 # ---------------------------
 .env
 .env.*  # si tu as plusieurs fichiers .env
-config/*.env  # si tu stockes des .env dans un sous-dossier config
+settings/*.env  # si tu stockes des .env dans un sous-dossier config
 
 # ---------------------------
 # IDE / éditeurs
